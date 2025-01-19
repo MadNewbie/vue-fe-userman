@@ -1,10 +1,16 @@
 <template>
-    <div>
-        <h1>Login</h1>
+    <div class="wadah">
+        <h1 class="text-center">Login</h1>
         <form method="POST" @submit="onLoginSubmit">
-            <input type="text" name="username" v-model="user.username" placeholder="Username" required>
-            <input type="password" name="password" v-model="user.password" placeholder="Password" required>
-            <button type="submit">Masuk</button>
+            <div class="form-group">
+                <input type="text" name="username" v-model="user.username" placeholder="Username" required class="form-control">
+            </div>
+            <div class="form-group">
+                <input type="password" name="password" v-model="user.password" placeholder="Password" required class="form-control">
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-info">Masuk</button>
+            </div>
         </form>
     </div>
 </template>
@@ -33,13 +39,15 @@ export default {
         },
 
         logIn(payload) {
-            const path = 'http://localhost:5000/login'
+            const path = process.env.VUE_APP_BACKEND_URL+'/login'
             axios.post(path, payload)
                 .then((res) => {
                     this.message = res.data.message
                     if (res.data.status === "success") {
+                        this.$toastr.s(this.message)
                         this.$router.replace({path: '/'})
                     } else {
+                        this.$toastr.e(this.message)
                         this.user.password = ''
                     }
                 })
@@ -47,6 +55,10 @@ export default {
                     console.error(err)
                 })
         }
+    },
+
+    mounted() {
+        console.log("API URL:", process.env.VUE_APP_BACKEND_URL); // Debugging check
     },
 }
 </script>
